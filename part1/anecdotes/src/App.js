@@ -1,10 +1,20 @@
 import {useState} from 'react'
 
 const Button = ({text, handleClick}) => (
-        <button onClick={handleClick}>
-            {text}
-        </button>
+    <button onClick={handleClick}>
+        {text}
+    </button>
 )
+
+const MostVote = ({getMostVoted}) => {
+    const {point, anecdote} = getMostVoted()
+    return (
+        <div>
+            <div>{anecdote}</div>
+            <div>has {point} votes</div>
+        </div>
+    )
+}
 
 const App = () => {
     const getRandomInt = max => Math.floor(Math.random() * max)
@@ -31,13 +41,26 @@ const App = () => {
         copy[selected] += 1
         setPoints(copy)
     }
+    const getMostVoted = () => {
+        const max = Math.max(...points)
+        const index = points.indexOf(max)
+        return {
+            point: points[index],
+            anecdote: anecdotes[index]
+        }
+    }
 
     return (
         <div>
+            <h2>Anecdote of the day</h2>
             <div>{anecdotes[selected]}</div>
             <div>has {points[selected]} votes</div>
-            <Button text={'vote'} handleClick={vote} />
-            <Button text='next anecdote' handleClick={random} />
+            <div>
+                <Button text={'vote'} handleClick={vote} />
+                <Button text='next anecdote' handleClick={random} />
+            </div>
+            <h2>Anecdote with most votes</h2>
+            <MostVote getMostVoted={getMostVoted} />
         </div>
     )
 }
