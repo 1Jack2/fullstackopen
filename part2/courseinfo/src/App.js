@@ -20,9 +20,16 @@ const Course = ({course}) => (
     </div>
 )
 
-const Total = (props) => (
-    <p>Number of exercises {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises}</p>
-)
+const Total = ({parts}) => {
+    return (
+        <p><b>
+            Total of exercises {parts.reduce(
+                (s, p) => s + p.exercises,
+                0
+            )}
+        </b></p>
+    )
+}
 
 const App = () => {
     const course = {
