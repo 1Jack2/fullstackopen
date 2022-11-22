@@ -1,4 +1,7 @@
 import {useState} from 'react'
+import Persons from './components/Persons'
+import PersonForm from './components/PersonForm'
+import Filter from './components/Filter'
 
 const App = () => {
     const [persons, setPersons] = useState([
@@ -17,6 +20,7 @@ const App = () => {
         event.preventDefault()
         if (persons.some((person) => person.name === newName)) {
             alert(`${newName} is already added to phonebook`)
+            return
         }
         const newPerson = {
             name: newName,
@@ -28,42 +32,26 @@ const App = () => {
     }
 
     const handleNameChange = (event) => {
-        console.log(event.target.value)
         setNewName(event.target.value)
     }
 
     const handleNumberChange = (event) => {
-        console.log(event.target.value)
         setNewNumber(event.target.value)
     }
 
     const handleFilterChange = (event) => {
-        console.log(event.target.value)
         setFilterKey(event.target.value)
     }
 
     return (
         <div>
             <h2>Phonebook</h2>
-            <div>
-                filter shown with <input value={filterKey} onChange={handleFilterChange} />
-            </div>
+            <Filter filterKey={filterKey} handleFilterChange={handleFilterChange} />
             <h3>add a new</h3>
-            <form onSubmit={addPerson}>
-                <div>
-                    name: <input value={newName} onChange={handleNameChange} />
-                </div>
-                <div>
-                    number: <input value={newNumber} onChange={handleNumberChange} />
-                </div>
-                <div>
-                    <button type="submit">add</button>
-                </div>
-            </form>
+            <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
             <h3>Numbers</h3>
-            <ul>
-                {filteredPersons.map((person) => <li key={person.id}>{person.name} {person.number}</li>)}
-            </ul>
+            <Persons persons={filteredPersons} />
+
             <div>debug: {newName} {newNumber}</div>
         </div>
     )
