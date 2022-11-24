@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
-import axios from 'axios'
+import service from './services/phonebook'
 
 const App = () => {
     const [persons, setPersons] = useState([])
@@ -13,9 +13,9 @@ const App = () => {
         (person) => person.name.toLowerCase().includes(filterKey.toLowerCase()));
 
     useEffect(() => {
-        axios.get("http://localhost:3001/persons").then((response) => {
+        service.getAll().then(data => {
             console.log("promise fulfilled")
-            setPersons(response.data)
+            setPersons(data)
         })
     }, [])
     console.log("render", persons.length, 'persons');
@@ -30,8 +30,8 @@ const App = () => {
             name: newName,
             number: newNumber,
         }
-        axios.post("http://localhost:3001/persons", newPerson).then(response => {
-            setPersons(persons.concat(response.data))
+        service.create(newPerson).then(data => {
+            setPersons(persons.concat(data))
         })
     }
 
