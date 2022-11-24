@@ -2,7 +2,7 @@ const Person = (props) => {
     const {person, handleDelete} = props
     // console.log(props)
     return <div>
-        {person.id} {person.name}
+        {person.name} {person.number}
         <button onClick={handleDelete}>delete</button>
     </div>
 }
