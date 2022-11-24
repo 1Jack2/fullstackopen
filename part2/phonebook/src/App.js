@@ -18,7 +18,7 @@ const App = () => {
             setPersons(data)
         })
     }, [])
-    console.log("render", persons.length, 'persons');
+    // console.log("render", persons.length, 'persons');
 
     const addPerson = (event) => {
         event.preventDefault()
@@ -47,6 +47,14 @@ const App = () => {
         setFilterKey(event.target.value)
     }
 
+    const handleDelete = (id) => {
+        const data = service.del(id)
+        // console.log('before delete data.length = ', persons.length)
+        setPersons(persons.filter(v => v.id !== id))
+        // console.log(persons.filter(v => v.id !== id))
+        // console.log('after delete data.length = ', persons.length)
+    }
+
     return (
         <div>
             <h2>Phonebook</h2>
@@ -54,7 +62,7 @@ const App = () => {
             <h3>add a new</h3>
             <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
             <h3>Numbers</h3>
-            <Persons persons={filteredPersons} />
+            <Persons persons={filteredPersons} handleDelete={handleDelete} />
 
             <div>debug: {newName} {newNumber}</div>
         </div>
