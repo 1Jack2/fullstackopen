@@ -10,7 +10,8 @@ const App = () => {
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [filterKey, setFilterKey] = useState('')
-    const [notification, setNotification] = useState(null)
+    const [notificationMsg, setNotificationMsg] = useState(null)
+    const [errorMsg, setErrorMsg] = useState(null)
     const filteredPersons = persons.filter(
         (person) => person.name.toLowerCase().includes(filterKey.toLowerCase()));
 
@@ -31,11 +32,12 @@ const App = () => {
                 const updatedPerson = {...existedPerson, number: newNumber}
                 console.log(updatedPerson)
                 service.update(existedPerson.id, updatedPerson).then((data) => {
-                    setNotification(
-                        `Updated ${data.name}`
+                    setNotificationMsg(
+                        `Updated ${data.name}`,
+                        null
                     )
                     setTimeout(() => {
-                        setNotification(null)
+                        setNotificationMsg(null)
                     }, 3000)
                     setPersons(persons.map((v) => {
                         return v === existedPerson
@@ -53,11 +55,11 @@ const App = () => {
             number: newNumber,
         }
         service.create(newPerson).then(data => {
-            setNotification(
+            setNotificationMsg(
                 `Added ${data.name}`
             )
             setTimeout(() => {
-                setNotification(null)
+                setNotificationMsg(null)
             }, 5000)
             setPersons(persons.concat(data))
         })
@@ -76,7 +78,15 @@ const App = () => {
     }
 
     const handleDelete = (id) => {
-        const data = service.del(id)
+        const data = service.del(id).catch(error => {
+            const removedPerson = persons.find(v => v.id === id)
+            setErrorMsg(
+                `${removedPerson.name} has already been removed from server`
+            )
+            setTimeout(() => {
+                setErrorMsg(null)
+            }, 3000)
+        })
         // console.log('before delete data.length = ', persons.length)
         setPersons(persons.filter(v => v.id !== id))
         // console.log(persons.filter(v => v.id !== id))
@@ -86,7 +96,7 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
-            <Notification message={notification} />
+            <Notification notificationMsg={notificationMsg} errorMsg={errorMsg}/>
             <Filter filterKey={filterKey} handleFilterChange={handleFilterChange} />
             <h3>add a new</h3>
             <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
