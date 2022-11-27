@@ -31,20 +31,26 @@ const App = () => {
             if (ok) {
                 const updatedPerson = {...existedPerson, number: newNumber}
                 console.log(updatedPerson)
-                service.update(existedPerson.id, updatedPerson).then((data) => {
-                    setNotificationMsg(
-                        `Updated ${data.name}`,
-                        null
-                    )
-                    setTimeout(() => {
-                        setNotificationMsg(null)
-                    }, 3000)
-                    setPersons(persons.map((v) => {
-                        return v === existedPerson
-                            ? updatedPerson
-                            : v
-                    }))
-                })
+                service.update(existedPerson.id, updatedPerson)
+                    .then((data) => {
+                        setNotificationMsg(
+                            `Updated ${data.name}`
+                        )
+                        setTimeout(() => {
+                            setNotificationMsg(null)
+                        }, 3000)
+                        setPersons(persons.map((v) => {
+                            return v === existedPerson
+                                ? updatedPerson
+                                : v
+                        }))
+                    })
+                    .catch(error => {
+                        setErrorMsg(error.response.data.error)
+                        setTimeout(() => {
+                            setErrorMsg(null)
+                        }, 3000)
+                    })
             }
 
             return
@@ -54,15 +60,22 @@ const App = () => {
             name: newName,
             number: newNumber,
         }
-        service.create(newPerson).then(data => {
-            setNotificationMsg(
-                `Added ${data.name}`
-            )
-            setTimeout(() => {
-                setNotificationMsg(null)
-            }, 5000)
-            setPersons(persons.concat(data))
-        })
+        service.create(newPerson)
+            .then(data => {
+                setNotificationMsg(
+                    `Added ${data.name}`
+                )
+                setTimeout(() => {
+                    setNotificationMsg(null)
+                }, 3000)
+                setPersons(persons.concat(data))
+            })
+            .catch(error => {
+                setErrorMsg(error.response.data.error)
+                setTimeout(() => {
+                    setErrorMsg(null)
+                }, 3000)
+            })
     }
 
     const handleNameChange = (event) => {
@@ -96,7 +109,7 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
-            <Notification notificationMsg={notificationMsg} errorMsg={errorMsg}/>
+            <Notification notificationMsg={notificationMsg} errorMsg={errorMsg} />
             <Filter filterKey={filterKey} handleFilterChange={handleFilterChange} />
             <h3>add a new</h3>
             <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
